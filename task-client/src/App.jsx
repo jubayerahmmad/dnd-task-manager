@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from "react-router";
 import Login from "./components/Login";
 import { auth } from "./firebase.config";
 import TasksPage from "./components/Tasks/TasksPage";
+import UpdateTask from "./components/Tasks/UpdateTask";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -11,18 +12,27 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      // console.log(user);
+      console.log(user);
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <p className="flex justify-center items-center min-h-screen text-5xl font-bold">
+        Loading...
+      </p>
+    );
   return (
     <Routes>
       <Route path="/" element={user ? <Navigate to="/tasks" /> : <Login />} />
       <Route
         path="/tasks"
         element={user ? <TasksPage /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/update-task/:id"
+        element={user ? <UpdateTask /> : <Navigate to="/" />}
       />
     </Routes>
   );

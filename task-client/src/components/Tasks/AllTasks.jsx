@@ -43,13 +43,12 @@ const AllTasks = ({ tasks, setTasks }) => {
   const onDragEnd = async (event) => {
     setActiveTask(null);
     const { active, over } = event;
-
-    if (!over) return;
-
     const draggedTaskId = active.id;
     const draggedCategory = over.id;
 
-    //updating th ui
+    if (draggedTaskId === draggedCategory) return;
+
+    //updating the ui
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task._id === draggedTaskId
@@ -59,10 +58,15 @@ const AllTasks = ({ tasks, setTasks }) => {
     );
 
     // updating category on mongodb
-    await axios.patch(`http://localhost:5000/tasks/${draggedTaskId}`, {
-      category: draggedCategory,
-    });
-    toast.success(`Task Moved to ${draggedCategory}`);
+    const { data } = await axios.patch(
+      `https://task-server-pi-nine.vercel.app/update-category/${draggedTaskId}`,
+      {
+        category: draggedCategory,
+      }
+    );
+    if (data.modifiedCount) {
+      toast.success(`Task Moved to ${draggedCategory}`);
+    }
   };
 
   return (

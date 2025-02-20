@@ -3,6 +3,7 @@ import { GoogleAuthProvider } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { auth } from "../firebase.config";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const provider = new GoogleAuthProvider();
 const Login = () => {
@@ -15,9 +16,11 @@ const Login = () => {
         name: user?.displayName,
         email: user?.email,
         createdAt: user?.metadata.creationTime,
+        userId: user?.uid,
       };
-      const { data } = await axios.post("http://localhost:5000/user", userData);
-      console.log("from login", data);
+      await axios.post("https://task-server-pi-nine.vercel.app/user", userData);
+      // console.log("from login", data);
+      toast.success("Login Successful");
       navigate("/tasks");
     } catch (error) {
       console.error(error);
@@ -25,11 +28,11 @@ const Login = () => {
   };
   return (
     <div className="flex justify-center items-center flex-col min-h-screen">
-      <h1 className="text-4xl font-black my-2">Task Manager</h1>
+      <h1 className="text-4xl text-white font-bold my-2">Task Manager</h1>
 
       <button
         onClick={handleLogin}
-        className="border border-[#e5eaf2] rounded-md py-2 px-4 flex items-center gap-[10px] text-[1rem] text-[#424242] hover:bg-gray-50 transition-all duration-200"
+        className="border border-white rounded-md py-2 px-4 flex items-center gap-[10px] text-[1rem] text-white hover:text-black hover:bg-gray-50"
       >
         <img
           src="https://i.ibb.co/dQMmB8h/download-4-removebg-preview-1.png"

@@ -5,12 +5,12 @@ const DroppableColumn = ({ id, title, children }) => {
   const { setNodeRef } = useDroppable({ id });
 
   return (
-    <div ref={setNodeRef} className="border">
-      <h1 className="text-center font-bold text-2xl bg-black text-white py-2">
+    <div ref={setNodeRef} className="border bg-gray-900 rounded-xl p-4">
+      <h1 className="font-bold rounded-t-xl text-2xl text-white p-2">
         {title}
       </h1>
       {/* task card as children */}
-      <div className="p-2">{children}</div>
+      <div className="p-2 rounded-b-xl">{children}</div>
     </div>
   );
 };
