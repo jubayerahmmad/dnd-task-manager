@@ -38,9 +38,13 @@ async function run() {
     });
 
     // save task
-
     app.post("/tasks", async (req, res) => {
-      const taskData = req.body;
+      const task = req.body;
+      const taskData = {
+        ...task,
+        createdAt: new Date().toISOString(),
+        category: "todo",
+      };
       const result = await taskCollection.insertOne(taskData);
       res.send(result);
     });
