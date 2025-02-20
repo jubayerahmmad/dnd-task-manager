@@ -41,7 +41,7 @@ Follow these steps to set up the project locally:
    ```
 2. **Navigate into the project directory:**
    ```sh
-   cd task-management
+   cd task-client
    ```
 3. **Install dependencies:**
    ```sh
@@ -57,6 +57,6 @@ Follow these steps to set up the project locally:
 - **React.js** - Frontend library
 - **Tailwind CSS** - Styling framework
 - **Dnd Kit** - Drag-and-drop handling
-- **Firebase** - Authentication (if applicable)
+- **Firebase** - Authentication
 - **Axios** - API calls
 - **React Router** - Navigation handling

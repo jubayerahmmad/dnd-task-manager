@@ -28,7 +28,7 @@ const TaskCard = ({ task, tasks, setTasks }) => {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className="my-2 p-4 border border-gray-500 shadow-2xs shadow-white text-xl bg-gray-900 text-white duration-300 touch-none cursor-grabbing rounded-xl"
+      className="my-2 p-4 border border-gray-500 shadow-2xs shadow-white text-xl bg-gray-900 text-white duration-300 touch-none cursor-grabbing rounded-xl space-y-4"
     >
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">{task.task}</h3>
