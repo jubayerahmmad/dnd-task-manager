@@ -25,6 +25,26 @@ async function run() {
     const userCollection = db.collection("task-users");
     const taskCollection = db.collection("tasks");
 
+    // save user
+    app.post("/user", async (req, res) => {
+      const userData = req.body;
+      // insert email if user doesn't exist
+      const isExist = await userCollection.findOne({ email: userData?.email });
+      if (isExist) {
+        return res.send({ message: "User Already exists in db" });
+      }
+      const result = await userCollection.insertOne(userData);
+      res.send(result);
+    });
+
+    // save task
+
+    app.post("/tasks", async (req, res) => {
+      const taskData = req.body;
+      const result = await taskCollection.insertOne(taskData);
+      res.send(result);
+    });
+
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
