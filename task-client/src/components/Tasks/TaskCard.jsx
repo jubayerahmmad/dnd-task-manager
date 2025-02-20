@@ -1,9 +1,15 @@
+import { useDraggable } from "@dnd-kit/core";
 import axios from "axios";
 import PropTypes from "prop-types";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 
 const TaskCard = ({ task, tasks, setTasks }) => {
+  const { attributes, listeners, setNodeRef } = useDraggable({
+    id: task._id,
+    data: { ...task },
+  });
+
   const handleDelete = async (id) => {
     const { data } = await axios.delete(`http://localhost:5000/tasks/${id}`);
     if (data.deletedCount) {
@@ -14,7 +20,12 @@ const TaskCard = ({ task, tasks, setTasks }) => {
     console.log(data);
   };
   return (
-    <div className="flex items-center justify-between p-2 bg-gray-100 font-semibold text-xl hover:bg-gray-700 hover:text-white duration-300">
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className="flex items-center justify-between m-1 p-2 bg-gray-100 border shadow-md font-semibold text-xl hover:bg-gray-700 hover:text-white duration-300 touch-none cursor-grabbing"
+    >
       <p>{task.task}</p>
       <button
         onClick={() => handleDelete(task._id)}

@@ -1,19 +1,37 @@
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase.config";
-// import { useState } from "react";
+import { auth } from "../../firebase.config";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AllTasks from "./AllTasks";
+import { useEffect, useState } from "react";
 
 const TasksPage = () => {
-  // const [task, setTask] = useState("");
+  const [tasks, setTasks] = useState([]);
+
+  // fetch tasks
+  const getData = async () => {
+    const { data } = await axios("http://localhost:5000/tasks");
+    setTasks(data);
+  };
+
+  useEffect(() => {
+    getData();
+  }, [setTasks]);
+
   const addTask = async (e) => {
     e.preventDefault();
-    const task = e.target.task.value;
-    const { data } = await axios.post("http://localhost:5000/tasks", { task });
-    toast.success("Task Added");
-    console.log(data);
-    e.target.reset();
+    const taskData = e.target.task.value;
+    try {
+      const { data } = await axios.post("http://localhost:5000/tasks", {
+        task: taskData,
+      });
+      toast.success("Task Added");
+      console.log(data);
+      getData();
+      e.target.reset();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleLogOut = async () => {
@@ -25,23 +43,23 @@ const TasksPage = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center flex-col max-w-7xl mx-auto">
+    <div className="flex justify-center items-center flex-col max-w-7xl mx-auto px-4 mb-4">
       <div className="flex justify-between gap-4 items-center w-full py-2">
-        <h1 className="text-4xl font-black my-2">Task Manager</h1>
+        <h1 className="text-2xl lg:text-4xl font-black my-2">Task Manager</h1>
         <button
           onClick={handleLogOut}
-          className="px-4 py-2 border border-[#3B9DF8] text-[#3B9DF8] transition duration-300 rounded "
+          className="px-2 py-1 lg:px-4 lg:py-2 border hover:border-gray-800 hover:text-white hover:bg-gray-900 transition duration-300 rounded-md font-bold"
         >
           Log Out
         </button>
       </div>
       {/* input  */}
-      <div className="w-6/12 relative">
+      <div className="lg:w-6/12 relative">
         <form onSubmit={addTask}>
           <input
             type="text"
             name="task"
-            placeholder="Add Task"
+            placeholder="Add New Task"
             required
             className="border bg-transparent border-border py-3 pl-4 pr-[115px] outline-none w-full rounded-md"
           />
@@ -52,7 +70,7 @@ const TasksPage = () => {
         </form>
       </div>
       {/* all tasks */}
-      <AllTasks />
+      <AllTasks tasks={tasks} setTasks={setTasks} />
     </div>
   );
 };

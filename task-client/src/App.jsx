@@ -2,8 +2,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import Login from "./components/Login";
-import TasksPage from "./components/TasksPage";
 import { auth } from "./firebase.config";
+import TasksPage from "./components/Tasks/TasksPage";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      console.log(user);
+      // console.log(user);
       setLoading(false);
     });
     return () => unsubscribe();
