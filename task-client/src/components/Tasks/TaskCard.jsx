@@ -44,7 +44,7 @@ const TaskCard = ({ task, tasks, setTasks }) => {
           </Link>
         </div>
       </div>
-      <p className="font-light text-gray-400">
+      <p className="font-light text-base text-gray-400">
         {task.description && task.description}
       </p>
       <p className="font-light text-xs text-gray-400 flex justify-end">

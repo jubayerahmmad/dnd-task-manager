@@ -12,7 +12,9 @@ const UpdateTask = () => {
 
   useEffect(() => {
     const fetchSingleTask = async () => {
-      const { data } = await axios(`http://localhost:5000/tasks/${id}`);
+      const { data } = await axios(
+        `https://task-server-pi-nine.vercel.app/tasks/${id}`
+      );
       setSingleTask(data);
     };
     fetchSingleTask();
