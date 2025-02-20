@@ -55,16 +55,35 @@ async function run() {
       res.send(result);
     });
 
+    // get single task
+    app.get("/tasks/:id", async (req, res) => {
+      const { id } = req.params;
+      const query = { _id: new ObjectId(id) };
+
+      const result = await taskCollection.findOne(query);
+      res.send(result);
+    });
+
     // update task category
-    app.patch("/tasks/:id", async (req, res) => {
+    app.patch("/update-category/:id", async (req, res) => {
       const { id } = req.params;
       const { category } = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updatedCategory = {
+        $set: { category },
+      };
 
-      const result = await taskCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { category } }
-      );
+      const result = await taskCollection.updateOne(query, updatedCategory);
 
+      res.send(result);
+    });
+
+    // update task by id
+    app.put("/tasks/:id", async (req, res) => {
+      const { id } = req.params;
+      const taskData = req.body;
+      const query = { _id: new ObjectId(id) };
+      const result = await taskCollection.updateOne(query, { $set: taskData });
       res.send(result);
     });
 
