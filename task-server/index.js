@@ -27,72 +27,113 @@ async function run() {
 
     // save user
     app.post("/user", async (req, res) => {
-      const userData = req.body;
-      // insert email if user doesn't exist
-      const isExist = await userCollection.findOne({ email: userData?.email });
-      if (isExist) {
-        return res.send({ message: "User Already exists in db" });
+      try {
+        const userData = req.body;
+        // insert email if user doesn't exist
+        const isExist = await userCollection.findOne({
+          email: userData?.email,
+        });
+        if (isExist) {
+          return res.status(409).send({ message: "User Already exists in db" });
+        }
+        const result = await userCollection.insertOne(userData);
+        res.status(201).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Internal Server Error", error });
       }
-      const result = await userCollection.insertOne(userData);
-      res.send(result);
     });
 
     // save task
     app.post("/tasks", async (req, res) => {
-      const task = req.body;
-      const taskData = {
-        ...task,
-        createdAt: new Date().toISOString(),
-        category: "todo",
-      };
-      const result = await taskCollection.insertOne(taskData);
-      res.send(result);
+      try {
+        const task = req.body;
+        const taskData = {
+          ...task,
+          createdAt: new Date().toISOString(),
+          category: "todo",
+        };
+        const result = await taskCollection.insertOne(taskData);
+        res.status(201).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Internal Server Error", error });
+      }
     });
 
     // get tasks
     app.get("/tasks", async (req, res) => {
-      const result = await taskCollection.find().toArray();
-      res.send(result);
+      try {
+        const result = await taskCollection.find().toArray();
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Internal Server Error", error });
+      }
     });
 
     // get single task
     app.get("/tasks/:id", async (req, res) => {
-      const { id } = req.params;
-      const query = { _id: new ObjectId(id) };
-
-      const result = await taskCollection.findOne(query);
-      res.send(result);
+      try {
+        const { id } = req.params;
+        const query = { _id: new ObjectId(id) };
+        const result = await taskCollection.findOne(query);
+        if (!result) {
+          return res.status(404).send({ message: "Task not found" });
+        }
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Internal Server Error", error });
+      }
     });
 
     // update task category
     app.patch("/update-category/:id", async (req, res) => {
-      const { id } = req.params;
-      const { category } = req.body;
-      const query = { _id: new ObjectId(id) };
-      const updatedCategory = {
-        $set: { category },
-      };
-
-      const result = await taskCollection.updateOne(query, updatedCategory);
-
-      res.send(result);
+      try {
+        const { id } = req.params;
+        const { category } = req.body;
+        const query = { _id: new ObjectId(id) };
+        const updatedCategory = {
+          $set: { category },
+        };
+        const result = await taskCollection.updateOne(query, updatedCategory);
+        if (result.matchedCount === 0) {
+          return res.status(404).send({ message: "Task not found" });
+        }
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Internal Server Error", error });
+      }
     });
 
     // update task by id
     app.put("/tasks/:id", async (req, res) => {
-      const { id } = req.params;
-      const taskData = req.body;
-      const query = { _id: new ObjectId(id) };
-      const result = await taskCollection.updateOne(query, { $set: taskData });
-      res.send(result);
+      try {
+        const { id } = req.params;
+        const taskData = req.body;
+        const query = { _id: new ObjectId(id) };
+        const result = await taskCollection.updateOne(query, {
+          $set: taskData,
+        });
+        if (result.matchedCount === 0) {
+          return res.status(404).send({ message: "Task not found" });
+        }
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Internal Server Error", error });
+      }
     });
 
     // delete task
     app.delete("/tasks/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await taskCollection.deleteOne(query);
-      res.send(result);
+      try {
+        const { id } = req.params;
+        const query = { _id: new ObjectId(id) };
+        const result = await taskCollection.deleteOne(query);
+        if (result.deletedCount === 0) {
+          return res.status(404).send({ message: "Task not found" });
+        }
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Internal Server Error", error });
+      }
     });
 
     console.log(
