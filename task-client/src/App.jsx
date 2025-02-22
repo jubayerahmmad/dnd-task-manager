@@ -12,14 +12,14 @@ function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      console.log(user);
+      // console.log(user);
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
   if (loading)
     return (
-      <p className="flex justify-center items-center min-h-screen text-5xl font-bold">
+      <p className="flex justify-center items-center min-h-screen text-white text-5xl font-bold">
         Loading...
       </p>
     );
@@ -28,7 +28,7 @@ function App() {
       <Route path="/" element={user ? <Navigate to="/tasks" /> : <Login />} />
       <Route
         path="/tasks"
-        element={user ? <TasksPage /> : <Navigate to="/" />}
+        element={user ? <TasksPage user={user} /> : <Navigate to="/" />}
       />
       <Route
         path="/update-task/:id"
@@ -37,5 +37,4 @@ function App() {
     </Routes>
   );
 }
-
 export default App;

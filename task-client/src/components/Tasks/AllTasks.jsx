@@ -15,17 +15,11 @@ import {
 import { SortableContext } from "@dnd-kit/sortable";
 import DroppableColumn from "./DroppableColumn";
 
-const categories = [
-  { categoryId: "todo", title: "To-Do" },
-  { categoryId: "In Progress", title: "In Progress" },
-  { categoryId: "Done", title: "Done" },
-];
-
 const AllTasks = ({ tasks, setTasks }) => {
   const [activeTask, setActiveTask] = useState(null);
   // console.log(activeTask);
 
-  // sensorts
+  // sensors
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, {
@@ -35,7 +29,7 @@ const AllTasks = ({ tasks, setTasks }) => {
 
   // handle drag start
   const onDragStart = (event) => {
-    // console.log(event);
+    console.log(event);
     setActiveTask(event.active.data.current);
   };
 
@@ -43,31 +37,50 @@ const AllTasks = ({ tasks, setTasks }) => {
   const onDragEnd = async (event) => {
     setActiveTask(null);
     const { active, over } = event;
+    console.log("onDragEnd", event);
     const draggedTaskId = active.id;
     const draggedCategory = over.id;
 
     if (draggedTaskId === draggedCategory) return;
 
     //updating the ui
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
+    setTasks((prevTasks) => {
+      // const originalPos = prevTasks.findIndex(
+      //   (taks) => taks._id === draggedTaskId
+      // );
+      // const latestPos = prevTasks.findIndex(
+      //   (taks) => taks._id === draggedCategory
+      // );
+      // return arrayMove(prevTasks, originalPos, latestPos);
+      return prevTasks.map((task) =>
         task._id === draggedTaskId
           ? { ...task, category: draggedCategory }
           : task
-      )
-    );
+      );
+    });
 
     // updating category on mongodb
-    const { data } = await axios.patch(
-      `https://task-server-pi-nine.vercel.app/update-category/${draggedTaskId}`,
-      {
-        category: draggedCategory,
+    try {
+      const { data } = await axios.patch(
+        `https://task-server-pi-nine.vercel.app/update-category/${draggedTaskId}`,
+        {
+          category: draggedCategory,
+        }
+      );
+      if (data.modifiedCount) {
+        toast.success(`Task Moved to ${draggedCategory}`);
       }
-    );
-    if (data.modifiedCount) {
-      toast.success(`Task Moved to ${draggedCategory}`);
+    } catch (error) {
+      toast.error("Failed to update task category");
+      console.error("Error updating task category:", error);
     }
   };
+
+  const categories = [
+    { categoryId: "todo", title: "To-Do" },
+    { categoryId: "In Progress", title: "In Progress" },
+    { categoryId: "Done", title: "Done" },
+  ];
 
   return (
     <DndContext
@@ -82,21 +95,32 @@ const AllTasks = ({ tasks, setTasks }) => {
             <SortableContext
               items={tasks.filter((task) => task.category === categoryId)}
             >
-              {tasks
-                .filter((task) => task.category === categoryId)
-                .map((task) => (
-                  <TaskCard
-                    key={task._id}
-                    task={task}
-                    tasks={tasks}
-                    setTasks={setTasks}
-                  />
-                ))}
+              {tasks.filter((task) => task.category === categoryId).length >
+              0 ? (
+                <>
+                  {tasks
+                    .filter((task) => task.category === categoryId)
+                    .map((task) => (
+                      <TaskCard
+                        key={task._id}
+                        task={task}
+                        tasks={tasks}
+                        setTasks={setTasks}
+                      />
+                    ))}
+                </>
+              ) : (
+                <p className="text-center font-bold text-white text-xl">
+                  No Task Found {title}!
+                </p>
+              )}
             </SortableContext>
           </DroppableColumn>
         ))}
+        <DragOverlay>
+          {activeTask && <TaskCard task={activeTask} />}
+        </DragOverlay>
       </div>
-      <DragOverlay>{activeTask && <TaskCard task={activeTask} />}</DragOverlay>
     </DndContext>
   );
 };

@@ -1,5 +1,6 @@
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase.config";
+import { Link } from "react-router";
 
 const Nav = () => {
   const handleLogOut = async () => {
@@ -12,12 +13,15 @@ const Nav = () => {
   };
   return (
     <div className="flex justify-between gap-4 items-center w-full py-2">
-      <h1 className="text-2xl lg:text-4xl font-bold text-white my-2">
+      <Link
+        to={"/tasks"}
+        className="text-2xl lg:text-4xl font-bold text-white my-2"
+      >
         Task Manager
-      </h1>
+      </Link>
       <button
         onClick={handleLogOut}
-        className="px-2 py-1 lg:px-4 lg:py-2 border border-white hover:border-gray-100 text-white hover:bg-gray-900 transition duration-300 rounded-md font-bold"
+        className="px-2 py-1 lg:px-4 lg:py-2 border border-blue-500 text-blue-500 transition duration-300 rounded-md font-bold"
       >
         Log Out
       </button>

@@ -28,18 +28,23 @@ const Login = () => {
   };
   return (
     <div className="flex justify-center items-center flex-col min-h-screen">
-      <h1 className="text-4xl text-white font-bold my-2">Task Manager</h1>
+      <h1 className="text-4xl font-bold my-2 text-white text-center">
+        Welcome to{" "}
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-500 to-blue-300">
+          Task Manager
+        </span>
+      </h1>
 
       <button
         onClick={handleLogin}
-        className="border border-white rounded-md py-2 px-4 flex items-center gap-[10px] text-[1rem] text-white hover:text-black hover:bg-gray-50"
+        className="border border-blue-500 hover:border-gray-50 rounded-md py-2 px-4 my-2 flex items-center gap-[10px] text-[1rem] text-blue-500 duration-800 hover:text-white hover:bg-gray-950"
       >
         <img
           src="https://i.ibb.co/dQMmB8h/download-4-removebg-preview-1.png"
           alt="google logo"
           className="w-[23px]"
         />
-        Sign in with Google
+        Sign in to Continue
       </button>
     </div>
   );
